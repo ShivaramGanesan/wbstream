@@ -10,6 +10,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -40,5 +41,11 @@ public class UserController {
     public String deleteUser(@PathVariable  Long id){
         userRepo.deleteById(id);
         return "user deleted";
+    }
+
+    //TODO remove later
+    @GetMapping(value = "/users")
+    public List<User> getAllUsers(){
+        return userRepo.findAll();
     }
 }

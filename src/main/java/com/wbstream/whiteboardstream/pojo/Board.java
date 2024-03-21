@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 
 @Entity
 public class Board {
+
+    //TODO add isPublic attribute
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
