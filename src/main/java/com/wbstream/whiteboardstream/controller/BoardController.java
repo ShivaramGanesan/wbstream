@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 
@@ -27,11 +28,13 @@ public class BoardController {
     BoardService boardService;
 
     @PostMapping(value = "/board")
-    public String createBoard(@RequestBody String body) throws APIException {
+    public ResponseEntity<Map> createBoard(@RequestBody String body) throws APIException {
         User u = boardAspect.getUser();
         JSONObject reqBody = boardAspect.getReqBody();
-        boardService.createBoard(reqBody.optString("name"), u);
-        return "board created";
+        Long boardId = boardService.createBoard(reqBody.optString("name"), u);
+
+        JSONObject res = new JSONObject().put("id", boardId).put("message", "board created successfully").put("status", "success");
+        return new ResponseEntity<>(res.toMap(), HttpStatus.CREATED);
 
     }
 
@@ -48,7 +51,7 @@ public class BoardController {
     }
 
     @PostMapping("/board/{id}/users")
-    public String addUsersToBoard(@PathVariable(name = "id") Long boardId, @RequestBody String requestBody) throws APIException{
+    public ResponseEntity<Map> addUsersToBoard(@PathVariable(name = "id") Long boardId, @RequestBody String requestBody) throws APIException{
         if(requestBody == null || requestBody.isEmpty()){
             throw new APIException("user details missing");
         }
@@ -58,12 +61,15 @@ public class BoardController {
             JSONObject obj = array.optJSONObject(i);
             userIds.add(obj.optLong("id"));
         }
-        boardService.addUsersToBoard(boardId, userIds);
-        return "users added to board";
+        List<Long> data = boardService.addUsersToBoard(boardId, userIds);
+        JSONObject res = new JSONObject();
+        res.put("status", "success");
+        res.put("data", data.toArray());
+        return new ResponseEntity<>(res.toMap(), HttpStatus.OK);
     }
 
     @DeleteMapping("/board/{id}/users")
-    public String removeUsersFromBoard(@PathVariable(name = "id") Long boardId, String requestBody){
+    public ResponseEntity<Map> removeUsersFromBoard(@PathVariable(name = "id") Long boardId, @RequestBody String requestBody){
         List<Long> userIds = new ArrayList<>();
         JSONArray array = new JSONArray(requestBody);
         for(int i=0;i<array.length();i++){
@@ -71,12 +77,15 @@ public class BoardController {
             userIds.add(obj.optLong("id"));
         }
         boardService.removeUsersFromBoard(boardId, userIds);
-        return "users removed from board";
+        JSONObject res = new JSONObject();
+        res.put("status", "success").put("message", "users removed from board");
+        return new ResponseEntity<>(res.toMap(), HttpStatus.OK);
+//        return "users removed from board";
     }
 
     @GetMapping("/board/{id}/users")
-    public List<User> getBoardUsers(@PathVariable(name = "id") Long boardId){
-        return boardService.getBoardUsers(boardId);
+    public ResponseEntity<List<User>> getBoardUsers(@PathVariable(name = "id") Long boardId){
+        return new ResponseEntity<>(boardService.getBoardUsers(boardId), HttpStatus.OK);
     }
 
     //TODO

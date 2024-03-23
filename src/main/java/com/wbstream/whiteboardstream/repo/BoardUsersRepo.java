@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,6 +19,7 @@ public interface BoardUsersRepo extends JpaRepository<BoardUsers, Long> {
     public List<BoardUsers> findAllByBoardId(Long boardId);
 
     @Modifying
+    @Transactional
     @Query(value = "delete from boardusers where board_id = :boardId AND user_id in :userIds", nativeQuery = true)
     public void deleteUsersFromBoard(Long boardId, List<Long> userIds);
 

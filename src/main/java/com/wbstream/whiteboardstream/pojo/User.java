@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+
 @Entity
 @Component
 @Table(name = "wbuser")
@@ -51,6 +53,17 @@ public class User {
         this.name = name;
         this.id = id;
     }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        isAdmin = admin;
+    }
+
+    @Transient
+    boolean isAdmin;
 
 
 }

@@ -85,8 +85,21 @@ public class BoardService {
         boardRepo.deleteById(id);
     }
 
-    public List<User> getBoardUsers(Long boardId){
-        return boardUsersRepo.findUsersByBoardId(boardId);
+    public List<User> getBoardUsers(Long boardId)
+    {
+        List<User> users = boardUsersRepo.findUsersByBoardId(boardId);
+        Board b = boardRepo.findById(boardId).get();
+        for(User u : users){
+            if(b.getCreatedBy().getId() == u.getId()){
+                u.setAdmin(true);
+            }
+        }
+        return users;
+
+    }
+
+    public Board getBoard(Long boardId){
+        return boardRepo.findById(boardId).orElse(null);
     }
 
     public List<Board> getAllBoards(){

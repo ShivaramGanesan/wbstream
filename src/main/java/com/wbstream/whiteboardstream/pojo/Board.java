@@ -11,7 +11,7 @@ public class Board {
     Long id;
 
     String name;
-    @OneToOne
+    @ManyToOne
     User createdBy;
 
     public Long getId() {
